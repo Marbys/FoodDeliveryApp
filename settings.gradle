@@ -1,0 +1,7 @@
+include 'api'
+include 'util'
+include ':microservices:composite-restaurant-service'
+include ':microservices:dish-service'
+include ':microservices:order-service'
+include ':microservices:restaurant-service'
+

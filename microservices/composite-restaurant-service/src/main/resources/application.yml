@@ -1,0 +1,19 @@
+server.port: 7000
+server.error.include-message: always
+
+app:
+  restaurant-service:
+    host: localhost
+    port: 7001
+  dish-service:
+    host: localhost
+    port: 7002
+  order-service:
+    host: localhost
+    port: 7003
+
+
+logging:
+  level:
+    root: INFO
+    io.github.marbys: DEBUG
