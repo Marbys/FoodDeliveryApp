@@ -1,4 +1,4 @@
-package io.github.marbys.microservices.compositerestaurant;
+package io.github.marbys.microservices.composite.restaurant;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

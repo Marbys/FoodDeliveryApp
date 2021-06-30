@@ -1,9 +1,7 @@
 package io.github.marbys.api.core.dish;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,10 +9,19 @@ import java.util.List;
 
 public interface DishService {
 
-    @GetMapping("/dish/{dishId}")
+    @GetMapping(
+            value = "/dish/{dishId}",
+            produces = "application/json")
     Mono<Dish> getDish(@PathVariable int dishId);
 
-    @GetMapping("/dish")
+    @GetMapping(
+            value = "/dish",
+            produces = "application/json")
     Flux<Dish> getMenu(@RequestParam(value = "restaurantId", required = true) int restaurantId);
-    
+
+    @PostMapping(
+            value = "/dish",
+            produces = "application/json",
+            consumes = "application/json")
+    Dish createDish(@RequestBody Dish dish);
 }

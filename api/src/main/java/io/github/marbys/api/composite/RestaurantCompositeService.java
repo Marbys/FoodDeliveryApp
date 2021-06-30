@@ -1,4 +1,4 @@
-package io.github.marbys.api.core.composite;
+package io.github.marbys.api.composite;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

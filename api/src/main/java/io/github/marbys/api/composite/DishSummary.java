@@ -1,4 +1,4 @@
-package io.github.marbys.api.core.composite;
+package io.github.marbys.api.composite;
 
 public class DishSummary {
     private final int dishId;

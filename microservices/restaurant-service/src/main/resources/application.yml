@@ -1,0 +1,26 @@
+server:
+  error.include-message: always
+  port: 7001
+
+spring.datasource:
+  url: jdbc:mysql://localhost/restaurant-db?useTimezone=true&serverTimezone=UTC
+  username: root
+  password: admin
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+spring.datasource:
+  url: jdbc:mysql://mysql/restaurant-db
+
+server.port: 8080

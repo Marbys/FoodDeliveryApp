@@ -1,4 +1,4 @@
-package io.github.marbys.api.core.composite;
+package io.github.marbys.api.composite;
 
 import io.github.marbys.api.core.dish.Dish;
 

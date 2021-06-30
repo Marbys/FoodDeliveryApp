@@ -1,0 +1,29 @@
+spring.datasource:
+  url: jdbc:mysql://localhost/dish-db?useTimezone=true&serverTimezone=UTC
+  username: root
+  password: admin
+server:
+  port: 7002
+  error:
+    include-message: always
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+spring.datasource:
+  url: jdbc:mysql://mysql/dish-db
+
+server.port: 8080
+
+

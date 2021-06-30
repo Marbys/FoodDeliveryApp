@@ -1,34 +1,37 @@
-package io.github.marbys.api.core.order;
+package io.github.marbys.microservices.order.persistence;
 
-import io.github.marbys.api.core.dish.Dish;
-
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Order {
+@Entity
+public class OrderEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Version
+    private int version;
+
     private int restaurantId;
     private int orderId;
-    private List<Dish> requestedDishes;
+
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "orderEntity")
+    private List<RequestedDish> requestedDishes = new ArrayList<>();
     private String customerAddress;
     private LocalDateTime orderCreatedAt;
-    private String serviceAddress;
 
-    public Order() {
-        this.restaurantId = 0;
-        this.orderId = 0;
-        this.requestedDishes = null;
-        this.customerAddress = null;
-        this.orderCreatedAt = null;
-        this.serviceAddress = null;
+    public OrderEntity() {
     }
 
-    public Order(int restaurantId, int orderId, List<Dish> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt, String serviceAddress) {
+    public OrderEntity(int restaurantId, int orderId, List<RequestedDish> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt) {
         this.restaurantId = restaurantId;
         this.orderId = orderId;
         this.requestedDishes = requestedDishes;
         this.customerAddress = customerAddress;
         this.orderCreatedAt = orderCreatedAt;
-        this.serviceAddress = serviceAddress;
     }
 
     public int getRestaurantId() {
@@ -39,6 +42,14 @@ public class Order {
         this.restaurantId = restaurantId;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
     public int getOrderId() {
         return orderId;
     }
@@ -47,11 +58,11 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public List<Dish> getRequestedDishes() {
+    public List<RequestedDish> getRequestedDishes() {
         return requestedDishes;
     }
 
-    public void setRequestedDishes(List<Dish> requestedDishes) {
+    public void setRequestedDishes(List<RequestedDish> requestedDishes) {
         this.requestedDishes = requestedDishes;
     }
 
@@ -69,13 +80,5 @@ public class Order {
 
     public void setOrderCreatedAt(LocalDateTime orderCreatedAt) {
         this.orderCreatedAt = orderCreatedAt;
-    }
-
-    public String getServiceAddress() {
-        return serviceAddress;
-    }
-
-    public void setServiceAddress(String serviceAddress) {
-        this.serviceAddress = serviceAddress;
     }
 }

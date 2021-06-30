@@ -1,37 +1,47 @@
-package io.github.marbys.api.core.dish;
+package io.github.marbys.microservices.dish.persistence;
 
-public class Dish {
+import javax.persistence.*;
+
+@Entity
+public class DishEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Version
+    private int version;
+
     private int restaurantId;
     private int dishId;
     private String name;
     private String description;
     private double price;
-    private String serviceAddress;
 
-    public Dish() {
-        this.restaurantId = 0;
-        this.dishId = 0;
-        this.name = null;
-        this.description = null;
-        this.price = 0;
-        this.serviceAddress = null;
+    public DishEntity() {
     }
 
-    public Dish(int restaurantId, int dishId, String name, String description, double price, String serviceAddress) {
+    public DishEntity(int restaurantId,int dishId, String name, String description, double price) {
         this.restaurantId = restaurantId;
         this.dishId = dishId;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.serviceAddress = serviceAddress;
     }
 
-    public int getRestaurantId() {
-        return restaurantId;
+    public int getId() {
+        return id;
     }
 
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public int getDishId() {
@@ -66,11 +76,11 @@ public class Dish {
         this.price = price;
     }
 
-    public String getServiceAddress() {
-        return serviceAddress;
+    public int getRestaurantId() {
+        return restaurantId;
     }
 
-    public void setServiceAddress(String serviceAddress) {
-        this.serviceAddress = serviceAddress;
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
     }
 }
