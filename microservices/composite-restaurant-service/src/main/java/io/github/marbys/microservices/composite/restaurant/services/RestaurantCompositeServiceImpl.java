@@ -41,7 +41,10 @@ public class RestaurantCompositeServiceImpl implements RestaurantCompositeServic
 
     private RestaurantAggregate toRestaurantAggregate(Restaurant restaurant,List<Dish> menu, List<Order> orders,  String serviceAddress) {
         List<DishSummary> list = menu.stream().map(dish -> new DishSummary(dish.getDishId(), dish.getName(), dish.getDescription(), dish.getPrice())).collect(Collectors.toList());
-        List<OrderSummary> orderSummaries = orders.stream().map(order -> new OrderSummary(order.getOrderId(), order.getRequestedDishes(), order.getCustomerAddress(), order.getOrderCreatedAt())).collect(Collectors.toList());
+        List<OrderSummary> orderSummaries = orders.stream().map(order -> {
+            List<Dish> dishes = order.getDishSummaries().stream().map(dishSummary -> new Dish(restaurant.getRestaurantId(), dishSummary.getDishId(), dishSummary.getName(), dishSummary.getDescription(), dishSummary.getPrice(), null)).collect(Collectors.toList());
+            return new OrderSummary(order.getOrderId(), dishes, order.getCustomerAddress(), order.getOrderCreatedAt());
+        }).collect(Collectors.toList());
         ServiceAddresses serviceAddresses = new ServiceAddresses(serviceAddress, menu.get(0).getServiceAddress(), null, restaurant.getServiceAddress());
         RestaurantAggregate restaurantAggregate = new RestaurantAggregate(restaurant.getRestaurantId(), restaurant.getName(), restaurant.getRating(), list, orderSummaries, serviceAddresses);
         return restaurantAggregate;

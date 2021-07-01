@@ -1,5 +1,6 @@
 package io.github.marbys.api.core.order;
 
+import io.github.marbys.api.composite.DishSummary;
 import io.github.marbys.api.core.dish.Dish;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ import java.util.List;
 public class Order {
     private int restaurantId;
     private int orderId;
-    private List<Dish> requestedDishes;
+    private List<DishSummary> requestedDishes;
     private String customerAddress;
     private LocalDateTime orderCreatedAt;
     private String serviceAddress;
@@ -22,7 +23,7 @@ public class Order {
         this.serviceAddress = null;
     }
 
-    public Order(int restaurantId, int orderId, List<Dish> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt, String serviceAddress) {
+    public Order(int restaurantId, int orderId, List<DishSummary> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt, String serviceAddress) {
         this.restaurantId = restaurantId;
         this.orderId = orderId;
         this.requestedDishes = requestedDishes;
@@ -47,11 +48,11 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public List<Dish> getRequestedDishes() {
+    public List<DishSummary> getDishSummaries() {
         return requestedDishes;
     }
 
-    public void setRequestedDishes(List<Dish> requestedDishes) {
+    public void setDishSummaries(List<DishSummary> requestedDishes) {
         this.requestedDishes = requestedDishes;
     }
 
@@ -77,5 +78,17 @@ public class Order {
 
     public void setServiceAddress(String serviceAddress) {
         this.serviceAddress = serviceAddress;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "restaurantId=" + restaurantId +
+                ", orderId=" + orderId +
+                ", requestedDishes=" + requestedDishes +
+                ", customerAddress='" + customerAddress + '\'' +
+                ", orderCreatedAt=" + orderCreatedAt +
+                ", serviceAddress='" + serviceAddress + '\'' +
+                '}';
     }
 }

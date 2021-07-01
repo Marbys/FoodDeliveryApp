@@ -35,4 +35,14 @@ public class DishSummary {
     public double getPrice() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        return "DishSummary{" +
+                "dishId=" + dishId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }

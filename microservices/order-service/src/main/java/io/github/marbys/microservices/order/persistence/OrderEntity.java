@@ -81,4 +81,15 @@ public class OrderEntity {
     public void setOrderCreatedAt(LocalDateTime orderCreatedAt) {
         this.orderCreatedAt = orderCreatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "OrderEntity{" +
+                ", restaurantId=" + restaurantId +
+                ", orderId=" + orderId +
+                ", requestedDishes=" + requestedDishes +
+                ", customerAddress='" + customerAddress + '\'' +
+                ", orderCreatedAt=" + orderCreatedAt +
+                '}';
+    }
 }
