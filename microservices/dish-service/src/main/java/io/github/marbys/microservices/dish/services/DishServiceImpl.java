@@ -41,7 +41,7 @@ public class DishServiceImpl implements DishService {
         if(dishId < 1)
             throw new InvalidInputException("Invalid dishId: " + dishId);
 
-        DishEntity entity = repository.findById(dishId).orElseThrow(() -> new NotFoundException("No dish found for dishId: " + dishId));
+        DishEntity entity = repository.findByDishId(dishId).orElseThrow(() -> new NotFoundException("No dish found for dishId: " + dishId));
         Dish dish = mapper.dishEntityToDish(entity);
         dish.setServiceAddress(serviceUtil.getServiceAddress());
 

@@ -8,11 +8,11 @@ import io.github.marbys.microservices.order.persistence.OrderEntity;
 import io.github.marbys.microservices.order.persistence.OrderRepository;
 import io.github.marbys.microservices.order.persistence.RequestedDish;
 import io.github.marbys.util.exceptions.InvalidInputException;
+import io.github.marbys.util.exceptions.NotFoundException;
 import io.github.marbys.util.http.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -43,10 +43,10 @@ public class OrderServiceImpl implements OrderService {
         if (orderId < 1)
             throw new InvalidInputException("Invalid orderId: " + orderId);
 
-        Mono<OrderEntity> foundEntity = repository.findByOrderId(orderId);
+        Mono<OrderEntity> foundEntity = repository.findByOrderId(orderId).switchIfEmpty(Mono.error(new NotFoundException("No orders found for orderId: " + orderId)));
         Mono<Order> foundOrder = foundEntity.log().map(e -> {
             List<DishSummary> dishes = e.getRequestedDishes().stream().map(d -> new DishSummary(e.getRestaurantId(), d.getDishId(), d.getName(), d.getDescription(), d.getPrice())).collect(Collectors.toList());
-            return new Order(e.getRestaurantId(), e.getOrderId(), dishes, e.getCustomerAddress(), e.getOrderCreatedAt(), serviceUtil.getServiceAddress());
+            return new Order(e.getRestaurantId(), e.getOrderId(), dishes, e.getCustomerAddress(), serviceUtil.getServiceAddress());
         });
 
         return foundOrder;
@@ -57,7 +57,6 @@ public class OrderServiceImpl implements OrderService {
 
         LOG.debug("Attempting to save order with id: " + order.getOrderId());
 
-        //List<RequestedDish> requestedDishes = order.getDishSummaries().stream().map(s -> new RequestedDish(s.getName(), s.getDescription(), s.getPrice())).collect(Collectors.toList());
         List<RequestedDish> requestedDishes = mapper.dishSummaryListToRequestedDishList(order.getDishSummaries());
         OrderEntity orderEntity = new OrderEntity(order.getRestaurantId(), (int) generatorService.generateSequence(OrderEntity.SEQUENCE_NAME), requestedDishes, null);
         repository.save(orderEntity)
@@ -71,8 +70,4 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-//    @Override
-//    public Flux<Order> getAllOrders(int restaurantId) {
-//        return Flux.just(new Order(restaurantId, 1, Collections.singletonList(new Dish()), "Szeligowska", LocalDateTime.now(), "SA"));
-//    }
 }

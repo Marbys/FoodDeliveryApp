@@ -15,7 +15,7 @@ import java.util.List;
 public interface OrderMapper {
 
     @Mappings({
-            @Mapping(target = "serviceAddress", ignore = true)
+            @Mapping(target = "serviceAddress", ignore = true),
 
     })
     Order entityToApi(OrderEntity entity);

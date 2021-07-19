@@ -48,14 +48,6 @@ public class OrderEntity {
         this.orderCreatedAt = LocalDateTime.now();
     }
 
-    public OrderEntity(int restaurantId, List<RequestedDish> requestedDishes, String customerAddress) {
-        this.orderId =
-        this.restaurantId = restaurantId;
-        this.requestedDishes = requestedDishes;
-        this.customerAddress = customerAddress;
-        this.orderCreatedAt = LocalDateTime.now();
-    }
-
     public int getRestaurantId() {
         return restaurantId;
     }

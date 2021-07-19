@@ -40,7 +40,6 @@ public class OrderServiceApplication {
 	ReactiveMongoOperations mongoTemplate;
 
 
-
 	@EventListener(ContextRefreshedEvent.class)
 	public void initIndicesAfterStartup() {
 

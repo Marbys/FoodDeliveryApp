@@ -27,11 +27,11 @@ public class MessageProcessor {
     public void process(Event<Integer, Dish> event) {
         switch (event.getEventType()) {
             case CREATE -> {
-                LOG.info("Create order with ID: {}", event.getData().getDishId());
+                LOG.info("Create dish with ID: {}", event.getData().getDishId());
                 dishService.createDish(event.getData());
             }
             case DELETE -> {
-                LOG.info("Delete order with ID: {}", event.getData().getDishId());
+                LOG.info("Delete dish with ID: {}", event.getData().getDishId());
             }
             default -> {
                 String errorMessage = "Incorrect event type: " +

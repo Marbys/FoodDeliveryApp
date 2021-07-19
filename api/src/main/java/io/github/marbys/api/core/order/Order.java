@@ -23,12 +23,12 @@ public class Order {
         this.serviceAddress = null;
     }
 
-    public Order(int restaurantId, int orderId, List<DishSummary> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt, String serviceAddress) {
+    public Order(int restaurantId, int orderId, List<DishSummary> requestedDishes, String customerAddress, String serviceAddress) {
         this.restaurantId = restaurantId;
         this.orderId = orderId;
         this.requestedDishes = requestedDishes;
         this.customerAddress = customerAddress;
-        this.orderCreatedAt = orderCreatedAt;
+        this.orderCreatedAt =  LocalDateTime.now();
         this.serviceAddress = serviceAddress;
     }
 
