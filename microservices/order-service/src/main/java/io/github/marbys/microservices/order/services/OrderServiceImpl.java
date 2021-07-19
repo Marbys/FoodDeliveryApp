@@ -1,40 +1,40 @@
 package io.github.marbys.microservices.order.services;
 
+import com.mongodb.DuplicateKeyException;
 import io.github.marbys.api.composite.DishSummary;
-import io.github.marbys.api.core.dish.Dish;
 import io.github.marbys.api.core.order.Order;
 import io.github.marbys.api.core.order.OrderService;
-import io.github.marbys.microservices.order.persistence.DishRepository;
 import io.github.marbys.microservices.order.persistence.OrderEntity;
 import io.github.marbys.microservices.order.persistence.OrderRepository;
 import io.github.marbys.microservices.order.persistence.RequestedDish;
 import io.github.marbys.util.exceptions.InvalidInputException;
-import io.github.marbys.util.exceptions.NotFoundException;
 import io.github.marbys.util.http.ServiceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static reactor.core.publisher.Mono.just;
 
 @RestController
 public class OrderServiceImpl implements OrderService {
+    private static final Logger LOG = LoggerFactory.getLogger(OrderServiceImpl.class);
 
+    private final SequenceGeneratorService generatorService;
     private final OrderRepository repository;
-    private final DishRepository dishRepository;
     private final ServiceUtil serviceUtil;
+    private final OrderMapper mapper;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository repository, ServiceUtil serviceUtil, DishRepository dishRepository) {
+    public OrderServiceImpl(SequenceGeneratorService generatorService, OrderRepository repository, ServiceUtil serviceUtil, OrderMapper mapper) {
+        this.generatorService = generatorService;
         this.repository = repository;
         this.serviceUtil = serviceUtil;
-        this.dishRepository = dishRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -43,37 +43,31 @@ public class OrderServiceImpl implements OrderService {
         if (orderId < 1)
             throw new InvalidInputException("Invalid orderId: " + orderId);
 
-        OrderEntity foundEntity = repository.findById(orderId).orElseThrow(() -> new NotFoundException("No order found for orderId: " + orderId));
-        List<DishSummary> dishes = foundEntity.getRequestedDishes().stream().map(requestedDish -> new DishSummary(requestedDish.getId(), requestedDish.getName(), requestedDish.getDescription(), requestedDish.getPrice())).collect(Collectors.toList());
-        Order order = new Order(foundEntity.getRestaurantId(), foundEntity.getOrderId(), dishes, foundEntity.getCustomerAddress(), foundEntity.getOrderCreatedAt(), null);
+        Mono<OrderEntity> foundEntity = repository.findByOrderId(orderId);
+        Mono<Order> foundOrder = foundEntity.log().map(e -> {
+            List<DishSummary> dishes = e.getRequestedDishes().stream().map(d -> new DishSummary(e.getRestaurantId(), d.getDishId(), d.getName(), d.getDescription(), d.getPrice())).collect(Collectors.toList());
+            return new Order(e.getRestaurantId(), e.getOrderId(), dishes, e.getCustomerAddress(), e.getOrderCreatedAt(), serviceUtil.getServiceAddress());
+        });
 
-
-        return just(order);
+        return foundOrder;
     }
 
     @Override
     public Order placeOrder(Order order) {
-//        List<RequestedDish> requestedDishes = order.getRequestedDishes().stream().map(dishSummary -> new RequestedDish(dishSummary.getName(), dishSummary.getDescription(), dishSummary.getPrice())).collect(Collectors.toList());
-//        System.out.println(requestedDishes);
-//        OrderEntity orderEntity = new OrderEntity(order.getRestaurantId(), order.getOrderId(), requestedDishes, order.getCustomerAddress(), LocalDateTime.now());
-//        requestedDishes.get(0).setOrderEntity(orderEntity);
-//        orderEntity.setRequestedDishes(requestedDishes);
-//        System.out.println(requestedDishes);
-//        OrderEntity savedEntity = repository.save(orderEntity);
 
-        System.out.println(order.toString());
+        LOG.debug("Attempting to save order with id: " + order.getOrderId());
 
-        OrderEntity orderEntity = new OrderEntity(order.getRestaurantId(), order.getOrderId(), null, order.getCustomerAddress(), LocalDateTime.now());
+        //List<RequestedDish> requestedDishes = order.getDishSummaries().stream().map(s -> new RequestedDish(s.getName(), s.getDescription(), s.getPrice())).collect(Collectors.toList());
+        List<RequestedDish> requestedDishes = mapper.dishSummaryListToRequestedDishList(order.getDishSummaries());
+        OrderEntity orderEntity = new OrderEntity(order.getRestaurantId(), (int) generatorService.generateSequence(OrderEntity.SEQUENCE_NAME), requestedDishes, null);
+        repository.save(orderEntity)
+        .log()
+        .onErrorMap(
+                DuplicateKeyException.class,
+                ex -> new InvalidInputException("Duplicate key, Order Id: " + order.getOrderId())
+        ).subscribe();
 
-        System.out.println(orderEntity);
-        List<RequestedDish> requestedDishes = order.getDishSummaries().stream().map(s -> new RequestedDish(orderEntity, s.getName(), s.getDescription(), s.getPrice())).collect(Collectors.toList());
-
-        System.out.println(requestedDishes);
-        orderEntity.setRequestedDishes(requestedDishes);
-
-        repository.save(orderEntity);
-        dishRepository.saveAll(requestedDishes);
-
+        LOG.debug("Order saved!");
         return order;
     }
 

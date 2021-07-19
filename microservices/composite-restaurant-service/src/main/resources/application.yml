@@ -17,3 +17,34 @@ logging:
   level:
     root: INFO
     io.github.marbys: DEBUG
+
+
+spring.cloud.stream:
+  defaultBinder: rabbit
+  default.contentType: application/json
+  bindings:
+    output-dishes:
+      destination: dishes
+      producer:
+        required-groups: auditGroup
+    output-orders:
+      destination: orders
+      producer:
+        required-groups: auditGroup
+    output-restaurants:
+      destination: restaurants
+      producer:
+        required-groups: auditGroup
+
+spring.cloud.stream.kafka.binder:
+  brokers: 127.0.0.1
+  defaultBrokerPort: 9092
+
+spring.rabbitmq:
+  host: 127.0.0.1
+  port: 5672
+  username: guest
+  password: guest
+
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"

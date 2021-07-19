@@ -7,7 +7,7 @@ import java.util.List;
 
 public class OrderSummary {
     private final int orderId;
-    private final List<Dish> requestedDishes;
+    private final List<DishSummary> requestedDishes;
     private final String customerAddress;
     private final LocalDateTime orderCreatedAt;
 
@@ -18,7 +18,7 @@ public class OrderSummary {
         this.orderCreatedAt = null;
     }
 
-    public OrderSummary(int orderId, List<Dish> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt) {
+    public OrderSummary(int orderId, List<DishSummary> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt) {
         this.orderId = orderId;
         this.requestedDishes = requestedDishes;
         this.customerAddress = customerAddress;
@@ -29,7 +29,7 @@ public class OrderSummary {
         return orderId;
     }
 
-    public List<Dish> getRequestedDishes() {
+    public List<DishSummary> getRequestedDishes() {
         return requestedDishes;
     }
 

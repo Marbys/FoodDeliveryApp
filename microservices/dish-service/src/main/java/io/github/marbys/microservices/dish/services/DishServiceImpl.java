@@ -26,21 +26,24 @@ public class DishServiceImpl implements DishService {
 
     private final DishRepository repository;
     private final ServiceUtil serviceUtil;
+    private final DishMapper mapper;
 
     @Autowired
-    public DishServiceImpl(DishRepository repository, ServiceUtil serviceUtil) {
+    public DishServiceImpl(DishRepository repository, ServiceUtil serviceUtil, DishMapper mapper) {
         this.repository = repository;
         this.serviceUtil = serviceUtil;
+        this.mapper = mapper;
     }
 
     @Override
     public Mono<Dish> getDish(int dishId) {
 
         if(dishId < 1)
-            throw new InvalidInputException();
+            throw new InvalidInputException("Invalid dishId: " + dishId);
 
-        DishEntity entity = repository.findById(dishId).orElseThrow(() -> new NotFoundException());
-        Dish dish = new Dish(entity.getRestaurantId(),entity.getDishId(), entity.getName(), entity.getDescription(), entity.getPrice(), null);
+        DishEntity entity = repository.findById(dishId).orElseThrow(() -> new NotFoundException("No dish found for dishId: " + dishId));
+        Dish dish = mapper.dishEntityToDish(entity);
+        dish.setServiceAddress(serviceUtil.getServiceAddress());
 
         return just(dish);
     }
@@ -48,19 +51,20 @@ public class DishServiceImpl implements DishService {
     @Override
     public Flux<Dish> getMenu(int restaurantId) {
         if (restaurantId < 1)
-            throw new InvalidInputException();
+            throw new InvalidInputException("Invalid restaurantId: " + restaurantId);
 
         List<DishEntity> requestedMenu = repository.findByRestaurantId(restaurantId);
-        List<Dish> menu = requestedMenu.stream().map(e -> new Dish(e.getRestaurantId(), e.getDishId(), e.getName(), e.getDescription(), e.getPrice(), null)).collect(Collectors.toList());
+        List<Dish> menu = requestedMenu.stream().map(e -> mapper.dishEntityToDish(e)).collect(Collectors.toList());
+        menu.forEach(s -> s.setServiceAddress(serviceUtil.getServiceAddress()));
 
         return Flux.fromIterable(menu);
     }
 
     @Override
     public Dish createDish(Dish dish) {
-        DishEntity entity = new DishEntity(dish.getRestaurantId(), dish.getDishId(), dish.getName(),dish.getDescription(),dish.getPrice());
-        DishEntity save = repository.save(entity);
-        Dish savedDish = new Dish(dish.getRestaurantId(), save.getDishId(), save.getName(), save.getDescription(), save.getPrice(), null);
+        DishEntity entity = mapper.dishToDishEntity(dish);
+        DishEntity savedEntity = repository.save(entity);
+        Dish savedDish = mapper.dishEntityToDish(savedEntity);
         return savedDish;
     }
 

@@ -1,24 +1,34 @@
 package io.github.marbys.microservices.order.persistence;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Document(collection = "orders")
 public class OrderEntity {
 
+    @Transient
+    public static final String SEQUENCE_NAME = "orders_sequence";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
 
     @Version
     private int version;
 
     private int restaurantId;
+
+    @Indexed(unique = true)
     private int orderId;
 
-    @OneToMany(fetch = FetchType.EAGER,mappedBy = "orderEntity")
     private List<RequestedDish> requestedDishes = new ArrayList<>();
     private String customerAddress;
     private LocalDateTime orderCreatedAt;
@@ -26,12 +36,24 @@ public class OrderEntity {
     public OrderEntity() {
     }
 
-    public OrderEntity(int restaurantId, int orderId, List<RequestedDish> requestedDishes, String customerAddress, LocalDateTime orderCreatedAt) {
+    @JsonCreator
+    public OrderEntity(@JsonProperty("restaurantId") int restaurantId,
+                       @JsonProperty("orderId") int orderId,
+                       @JsonProperty("requestedDishes") List<RequestedDish> requestedDishes,
+                       @JsonProperty("customerAddress") String customerAddress) {
         this.restaurantId = restaurantId;
         this.orderId = orderId;
         this.requestedDishes = requestedDishes;
         this.customerAddress = customerAddress;
-        this.orderCreatedAt = orderCreatedAt;
+        this.orderCreatedAt = LocalDateTime.now();
+    }
+
+    public OrderEntity(int restaurantId, List<RequestedDish> requestedDishes, String customerAddress) {
+        this.orderId =
+        this.restaurantId = restaurantId;
+        this.requestedDishes = requestedDishes;
+        this.customerAddress = customerAddress;
+        this.orderCreatedAt = LocalDateTime.now();
     }
 
     public int getRestaurantId() {
@@ -42,8 +64,16 @@ public class OrderEntity {
         this.restaurantId = restaurantId;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public int getVersion() {

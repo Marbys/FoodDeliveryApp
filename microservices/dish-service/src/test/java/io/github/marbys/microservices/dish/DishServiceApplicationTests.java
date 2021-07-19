@@ -14,19 +14,6 @@ import static reactor.core.publisher.Mono.when;
 @AutoConfigureWebTestClient
 class DishServiceApplicationTests {
 
-//	@Autowired
-//	WebTestClient client;
-//
-//	@BeforeAll
-//	void setUp() {
-//		when()
-//	}
-//
-//	@Test
-//	void getDishByDishId() {
-//		int dishId = 1;
-//		client.get()
-//				.uri("/dish/" + dishId);
-//	}
+
 
 }
