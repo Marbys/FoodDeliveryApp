@@ -3,6 +3,7 @@ package io.github.marbys.microservices.dish.persistence;
 import javax.persistence.*;
 
 @Entity
+@Table(indexes = {@Index(name = "dish_unique_idx", unique = true, columnList = "dishId")})
 public class DishEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -57,11 +57,9 @@ public class RestaurantCompositeServiceImpl implements RestaurantCompositeServic
 
         List<DishSummary> dishSummaryList = restaurantAggregate.getMenu();
         List<Dish> dishes = dishSummaryList.stream().map(s -> new Dish(restaurant.getRestaurantId(), s.getDishId(), s.getName(), s.getDescription(), s.getPrice(), null)).collect(Collectors.toList());
-        dishes.forEach(dish -> integration.createDish(dish));
+        dishes.forEach(integration::createDish);
 
         List<OrderSummary> orderSummaries = restaurantAggregate.getOrders();
-
-        //List<Order> orders = orderSummaries.stream().map(s -> new Order(restaurant.getRestaurantId(), s.getOrderId(), s.getRequestedDishes(), s.getCustomerAddress(), s.getOrderCreatedAt(), null)).collect(Collectors.toList());
 
         return restaurantAggregate;
     }

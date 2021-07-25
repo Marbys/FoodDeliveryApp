@@ -1,8 +1,11 @@
 package io.github.marbys.microservices.restaurant.persistence;
 
+import org.springframework.stereotype.Indexed;
+
 import javax.persistence.*;
 
 @Entity
+@Table(indexes = {@Index(name = "restaurant_unique_idx", columnList = "restaurantId", unique = true)})
 public class RestaurantEntity {
 
     @Id

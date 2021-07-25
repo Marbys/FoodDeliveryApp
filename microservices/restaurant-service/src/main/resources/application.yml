@@ -9,7 +9,7 @@ spring.datasource:
 
 spring:
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+#    database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
       ddl-auto: update
 

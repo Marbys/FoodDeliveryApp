@@ -15,7 +15,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.index.IndexResolver;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
 import org.springframework.data.mongodb.core.index.ReactiveIndexOperations;
@@ -29,16 +31,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class OrderServiceApplication {
 	private static final Logger LOG = LoggerFactory.getLogger(OrderServiceApplication.class);
 
+	@Autowired
+	ReactiveMongoOperations mongoTemplate;
+
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(OrderServiceApplication.class, args);
 		String mongodDbHost = ctx.getEnvironment().getProperty("spring.data.mongodb.host");
 		String mongodDbPort = ctx.getEnvironment().getProperty("spring.data.mongodb.port");
 		LOG.info("Connected to MongoDb: " + mongodDbHost + ":" + mongodDbPort);
+
 	}
-
-	@Autowired
-	ReactiveMongoOperations mongoTemplate;
-
 
 	@EventListener(ContextRefreshedEvent.class)
 	public void initIndicesAfterStartup() {
@@ -48,6 +50,7 @@ public class OrderServiceApplication {
 
 		ReactiveIndexOperations indexOps = mongoTemplate.indexOps(OrderEntity.class);
 		resolver.resolveIndexFor(OrderEntity.class).forEach(e -> indexOps.ensureIndex(e).block());
+
 	}
 
 }
