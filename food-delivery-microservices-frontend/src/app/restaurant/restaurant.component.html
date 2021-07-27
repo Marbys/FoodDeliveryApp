@@ -1,0 +1,52 @@
+<h2>Witaj w restauracji: {{restaurant.name}}</h2>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-9">
+      <mat-grid-list cols="1" rowHeight="250px">
+        <mat-grid-tile *ngFor="let menu of restaurant.menu" [colspan]="1" [rowspan]="1">
+          <a style="text-decoration: none" [routerLink]="['/restaurant', restaurant.restaurantId]">
+            <mat-card class="my-card">
+              <mat-card-header>
+                <mat-card-title class="title" style="text-transform: capitalize">{{menu.name}}</mat-card-title>
+                <mat-card-subtitle>{{menu.description}}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-actions>
+                <p class="text-price">Cena: {{menu.price}} zl
+                  <button class="mybutton" (click)="addDish(menu)">Dodaj do koszyka</button>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </a>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+
+    <div class="col-3" style="border-left: darkgray">
+      <div class="container">
+        <h2>Twoje zamówienie: </h2>
+        <mat-list *ngFor="let item of cart; index as i">
+          <mat-list-item>
+            <div class="row no-gutters" >
+              <div class="col-6">
+                <p>{{item.name}}</p>
+              </div>
+              <div class="col-4" style="text-align: right">
+                <p>{{item.price}} zł</p>
+              </div>
+              <div class="col-2">
+                <button (click)="removeFromCart(cart, i)">Usuń</button>
+              </div>
+            </div>
+          </mat-list-item>
+        </mat-list>
+        <div class="center">
+          <button (click)="makeOrder(cart)" style="padding: 20px" style="margin-top: 10px">Złoż zamówienie</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

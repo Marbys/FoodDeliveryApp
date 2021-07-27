@@ -1,0 +1,23 @@
+<div class="grid-container">
+  <h1 class="mat-h1">Wybierz swoją restaurację</h1>
+  <mat-grid-list cols="2" rowHeight="250px">
+    <mat-grid-tile *ngFor="let restaurant of restaurants" [colspan]="1" [rowspan]="2">
+      <a style="text-decoration: none" [routerLink]="['/restaurant', restaurant.restaurantId]">
+        <mat-card class="example-card">
+          <mat-card-header>
+            <mat-card-title>{{restaurant.name}}</mat-card-title>
+            <mat-card-subtitle>typ restauracji</mat-card-subtitle>
+          </mat-card-header>
+          <img mat-card-image src='{{"assets/" + image[(restaurant.restaurantId % 4)] + ".jpg"}}' class="responsive">
+
+          <mat-card-actions>
+            <p class="center">Ocena: {{restaurant.rating}}<img src="assets/star.png" class="star"></p>
+          </mat-card-actions>
+        </mat-card>
+      </a>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+
+
