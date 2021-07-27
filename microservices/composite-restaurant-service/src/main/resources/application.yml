@@ -48,3 +48,26 @@ spring.rabbitmq:
 
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+server.port: 8080
+
+app:
+  restaurant-service:
+    host: restaurant
+    port: 8080
+  dish-service:
+    host: dish
+    port: 8080
+  order-service:
+    host: order
+    port: 8080
+
+spring.rabbitmq.host: rabbitmq
+
+spring.cloud.stream.kafka.binder.brokers: kafka

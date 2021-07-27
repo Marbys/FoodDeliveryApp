@@ -31,8 +31,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class OrderServiceApplication {
 	private static final Logger LOG = LoggerFactory.getLogger(OrderServiceApplication.class);
 
-	@Autowired
-	ReactiveMongoOperations mongoTemplate;
+
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(OrderServiceApplication.class, args);
@@ -42,6 +41,9 @@ public class OrderServiceApplication {
 
 	}
 
+	@Autowired
+	ReactiveMongoOperations mongoTemplate;
+
 	@EventListener(ContextRefreshedEvent.class)
 	public void initIndicesAfterStartup() {
 
@@ -50,7 +52,6 @@ public class OrderServiceApplication {
 
 		ReactiveIndexOperations indexOps = mongoTemplate.indexOps(OrderEntity.class);
 		resolver.resolveIndexFor(OrderEntity.class).forEach(e -> indexOps.ensureIndex(e).block());
-
 	}
 
 }

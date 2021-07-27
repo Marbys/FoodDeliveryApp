@@ -43,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderId < 1)
             throw new InvalidInputException("Invalid orderId: " + orderId);
 
+
         Mono<OrderEntity> foundEntity = repository.findByOrderId(orderId).switchIfEmpty(Mono.error(new NotFoundException("No orders found for orderId: " + orderId)));
         Mono<Order> foundOrder = foundEntity.log().map(e -> {
             List<DishSummary> dishes = e.getRequestedDishes().stream().map(d -> new DishSummary(e.getRestaurantId(), d.getDishId(), d.getName(), d.getDescription(), d.getPrice())).collect(Collectors.toList());
@@ -58,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         LOG.debug("Attempting to save order with id: " + order.getOrderId());
 
         List<RequestedDish> requestedDishes = mapper.dishSummaryListToRequestedDishList(order.getDishSummaries());
-        OrderEntity orderEntity = new OrderEntity(order.getRestaurantId(), (int) generatorService.generateSequence(OrderEntity.SEQUENCE_NAME), requestedDishes, null);
+        OrderEntity orderEntity = new OrderEntity(order.getRestaurantId(), (int) generatorService.generateSequence(OrderEntity.SEQUENCE_NAME), requestedDishes, order.getCustomerAddress());
         repository.save(orderEntity)
         .log()
         .onErrorMap(
