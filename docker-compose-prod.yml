@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   dish:
-    build: Food_Delivery_Microservices/microservices/dish-service
+    image: marbys12/dish:1.0.0
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -11,7 +11,7 @@ services:
         condition: service_healthy
 
   order:
-    build: Food_Delivery_Microservices/microservices/order-service
+    image: marbys12/order:1.0.0
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -20,7 +20,7 @@ services:
         condition: service_healthy
 
   restaurant:
-    build: Food_Delivery_Microservices/microservices/restaurant-service
+    image: marbys12/restaurant:1.0.0
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -29,7 +29,7 @@ services:
         condition: service_healthy
 
   restaurant-composite:
-    build: Food_Delivery_Microservices/microservices/composite-restaurant-service
+    image: marbys12/restaurant-composite:1.0.0
     mem_limit: 350m
     ports:
       - "8080:8080"
